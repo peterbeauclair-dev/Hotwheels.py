@@ -1,4 +1,4 @@
-hotwheels.py
+
 #!/usr/bin/env python3
 """Hot Wheels tracker: auto-sync release lists, track TH / STH, browse by genre.
 
