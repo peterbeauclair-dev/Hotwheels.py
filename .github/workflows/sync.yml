@@ -1,0 +1,33 @@
+name: Sync Hot Wheels
+
+on:
+  schedule:
+    - cron: "0 14 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install anthropic requests beautifulsoup4
+
+      - name: Run sync
+        run: python hotwheels.py sync
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+
+      - name: Commit updated catalog
+        run: |
+          git config user.name "hotwheels-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add hotwheels.json || true
+          git diff --staged --quiet || (git commit -m "Update catalog" && git push)
